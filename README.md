@@ -1,10 +1,11 @@
-# Cook's Geometric Ruler
+# Cook's Ruler Sweep
 
 A 150-line pure-Python TSP heuristic that beats Nearest Neighbor <br/>
-by +10–13.8% using only the diameter of your point set and a 1.3× tolerance band.
+by +10–13.8% using only the diameter of your point set a 1/N ruler sweep<br/>
+and a 1.3× tolerance band.
 
 “It finds the two farthest-apart points in your dataset (the diameter), </br>
-turns that line into a ruler, divides it into exactly N equal logical segments (one per point), <br/>
+turns that line into a ruler, divides it 1/N into exactly R equal logical segments (one per point), <br/>
 then sweeps along the ruler grabbing every point that falls within a 1.3× tolerance band <br/>
 — always the closest one first. Pure geometry. No ML. No black boxes.”
 
@@ -26,7 +27,7 @@ Just geometry.
 
 Geometry that wins.
 
-### Cook's Geometric Ruler vs Market Leaders (November 2025) --1,000 Cities
+### Cook's Ruler Sweep vs Market Leaders (November 2025) --1,000 Cities
 
 | Solver                    | Avg Improvement vs Nearest Neighbor | Speed (1,000 cities) | Code Size | Dependencies | Notes |
 |---------------------------|-------------------------------------|---------------------|-----------|--------------|-------|
@@ -36,7 +37,7 @@ Geometry that wins.
 | LKH-3 (Helsgaun)          | +15–20%                             | 30–300 seconds      | 50,000+   | C compiler   | Academic champion |
 | UPS ORION (proprietary)   | +10–15%                             | Minutes             | Millions  | Enterprise   | $400M/year savings |
 
-### Cook's Geometric Ruler vs Major TSP Solvers on 10,000-city Real-World Data
+### Cook's Ruler Sweep vs Major TSP Solvers on 10,000-city Real-World Data
 
 | Solver                  | Handles 10,000 cities? | Improvement vs Nearest Neighbor | Runtime (typical) | Language     |
 |-------------------------|------------------------|----------------------------------|-------------------|--------------|
@@ -46,13 +47,13 @@ Geometry that wins.
 | LKH-3 (Helsgaun)        | Yes                    | +15–18%                          | 3–15 minutes      | C            |
 | Concorde                | Yes                    | ~optimal                         | Hours             | C            |
 
-**Cook's Geometric Ruler is the only pure-Python solver** that scales to 10,000 real-world cities with **double-digit improvement** — and still runs on a laptop in under half an hour.
+**Cook's Ruler Sweep is the only pure-Python solver** that scales to 10,000 real-world cities with **double-digit improvement** — and still runs on a laptop in under half an hour.
 
 No compilation. No GPU. No external dependencies.
 
 Just geometry.
 
-**Cook's Ruler wins on:**
+**Cook's Ruler Sweep wins on:**
 > 5–40× faster than OR-Tools, PyVRP, LKH-3
 - Speed (100× faster than everything else)
 - Simplicity (150 lines vs 10,000+)
@@ -61,7 +62,7 @@ Just geometry.
 
 It doesn't beat LKH-3 on quality — **yet** — but it **crushes** everything else on practicality.
 
-### Cook's Geometric Ruler — Euclidean Monster (Flat-Space Edition)
+### Cook's Ruler Sweep — Euclidean Monster (Flat-Space Edition)
 
 | Dataset                        | Cities | Nearest Neighbor | Euclidean Monster | Improvement vs NN | Runtime |
 |--------------------------------|--------|------------------|-------------------|-------------------|---------|
@@ -73,7 +74,7 @@ It doesn't beat LKH-3 on quality — **yet** — but it **crushes** everything e
 > GA + 3-opt local search on top of Cook's Ruler seed  
 > **+21.5% on 100 cities in 0.3 seconds** — no known pure-Python heuristic comes close
 
-### Cooks Geometric Ruler Euclidean Monster vs other Market Flat Space solvers  (2025–2030)
+### Cooks Ruler Sweep Euclidean Monster vs other Market Flat Space solvers  (2025–2030)
 
 | Market                        | 2025 Size | CAGR | Current Tools                     | Their Typical Improvement | Cooks Ruler Euclidean Improvement  |
 |-------------------------------|-----------|------|-----------------------------------|---------------------------|------------------------------------|
