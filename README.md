@@ -1,4 +1,4 @@
-# Cook's Ruler
+# Cook's Geometric Ruler
 
 A 150-line Python Geometric TSP heuristic.
 
@@ -20,7 +20,7 @@ Just geometry.
 
 Geometry that wins.
 
-### Cook's Ruler vs Market Leaders (November 2025) --1,000 Cities
+### Cook's Geometric Ruler vs Market Leaders (November 2025) --1,000 Cities
 
 | Solver                    | Avg Improvement vs Nearest Neighbor | Speed (1,000 cities) | Code Size | Dependencies | Notes |
 |---------------------------|-------------------------------------|---------------------|-----------|--------------|-------|
@@ -30,7 +30,7 @@ Geometry that wins.
 | LKH-3 (Helsgaun)          | +15–20%                             | 30–300 seconds      | 50,000+   | C compiler   | Academic champion |
 | UPS ORION (proprietary)   | +10–15%                             | Minutes             | Millions  | Enterprise   | $400M/year savings |
 
-### Cook's Ruler vs Major TSP Solvers on 10,000-city Real-World Data
+### Cook's Geometric Ruler vs Major TSP Solvers on 10,000-city Real-World Data
 
 | Solver                  | Handles 10,000 cities? | Improvement vs Nearest Neighbor | Runtime (typical) | Language     |
 |-------------------------|------------------------|----------------------------------|-------------------|--------------|
@@ -40,7 +40,7 @@ Geometry that wins.
 | LKH-3 (Helsgaun)        | Yes                    | +15–18%                          | 3–15 minutes      | C            |
 | Concorde                | Yes                    | ~optimal                         | Hours             | C            |
 
-**Cook's Ruler is the only pure-Python solver** that scales to 10,000 real-world cities with **double-digit improvement** — and still runs on a laptop in under half an hour.
+**Cook's Geometric Ruler is the only pure-Python solver** that scales to 10,000 real-world cities with **double-digit improvement** — and still runs on a laptop in under half an hour.
 
 No compilation. No GPU. No external dependencies.
 
@@ -55,7 +55,7 @@ Just geometry.
 
 It doesn't beat LKH-3 on quality — **yet** — but it **crushes** everything else on practicality.
 
-### Cook's Ruler — Euclidean Monster (Flat-Space Edition)
+### Cook's Geometric Ruler — Euclidean Monster (Flat-Space Edition)
 
 | Dataset                        | Cities | Nearest Neighbor | Euclidean Monster | Improvement vs NN | Runtime |
 |--------------------------------|--------|------------------|-------------------|-------------------|---------|
@@ -67,7 +67,7 @@ It doesn't beat LKH-3 on quality — **yet** — but it **crushes** everything e
 > GA + 3-opt local search on top of Cook's Ruler seed  
 > **+21.5% on 100 cities in 0.3 seconds** — no known pure-Python heuristic comes close
 
-### Cooks Ruler Euclidean Monster vs other Market Flat Space solvers  (2025–2030)
+### Cooks Geometric Ruler Euclidean Monster vs other Market Flat Space solvers  (2025–2030)
 
 | Market                        | 2025 Size | CAGR | Current Tools                     | Their Typical Improvement | Cooks Ruler Euclidean Improvement  |
 |-------------------------------|-----------|------|-----------------------------------|---------------------------|------------------------------------|
