@@ -1,18 +1,27 @@
 import math
 import random
-import itertools
 import pandas as pd
-import time
+import argparse
 
 def euclid(p1, p2):
     return math.hypot(p1[0] - p2[0], p1[1] - p2[1])
 
-# 3-opt (safe, fast)
+def nearest_neighbor(points):
+    n = len(points)
+    unvisited = set(range(n))
+    tour = [unvisited.pop()]
+    while unvisited:
+        current = tour[-1]
+        next_city = min(unvisited, key=lambda i: euclid(points[current], points[i]))
+        tour.append(next_city)
+        unvisited.remove(next_city)
+    return tour
+
 def three_opt(tour_points):
     n = len(tour_points)
     improved = True
     iterations = 0
-    while improved and iterations < 100:
+    while improved and iterations < 150:
         improved = False
         iterations += 1
         for i in range(n - 5):
@@ -25,20 +34,16 @@ def three_opt(tour_points):
             if improved: break
     return tour_points
 
-# Cook's Ruler seed
-def cooks_ruler_seed(points, tolerance):
+def cooks_ruler_seed(points, tolerance=1.3):
     n = len(points)
     if n < 2: return list(range(n))
     
-    # Farthest pair
-    si = ei = 0
-    max_d = 0
-    for i, j in itertools.combinations(range(n), 2):
-        d = euclid(points[i], points[j])
-        if d > max_d:
-            max_d, si, ei = d, i, j
+    # FORCE diameter along warehouse aisles (X-axis)
+    min_x = min(p[0] for p in points)
+    max_x = max(p[0] for p in points)
+    si = next(i for i, p in enumerate(points) if math.isclose(p[0], min_x))
+    ei = next(i for i, p in enumerate(points) if math.isclose(p[0], max_x))
     
-    # Projection
     S, E = points[si], points[ei]
     vec_SE = (E[0]-S[0], E[1]-S[1])
     D2 = vec_SE[0]**2 + vec_SE[1]**2 or 1
@@ -70,7 +75,6 @@ def cooks_ruler_seed(points, tolerance):
     if ei not in visited:
         tour.append(ei)
     
-    # Ensure tour has exactly n cities
     while len(tour) < n:
         remaining = [i for i in range(n) if i not in tour]
         next_i = min(remaining, key=lambda i: euclid(points[cur], points[i]))
@@ -79,70 +83,59 @@ def cooks_ruler_seed(points, tolerance):
     
     return tour
 
-# GA — 
-def ga_cooks_ruler(points, pop_size=60, generations=120):
+def ga_cooks_ruler(points):
     n = len(points)
+    pop_size = 120
+    generations = 200
     
-    # Seed with Cook's Ruler
-    population = []
-    for _ in range(pop_size):
-        tour = cooks_ruler_seed(points, random.uniform(0.8, 2.2))
-        if len(tour) != n:
-            tour = tour + [i for i in range(n) if i not in tour][:n-len(tour)]
-        population.append(tour)
+    print("Starting ALL-IN GA — 120 individuals, 200 generations...")
+    
+    population = [cooks_ruler_seed(points, tolerance=1.3) for _ in range(pop_size)]
     
     for gen in range(generations):
-        # Fitness
-        fitness = []
-        for tour in population:
-            length = sum(euclid(points[tour[i]], points[tour[(i+1)%n]]) for i in range(n))
-            fitness.append(length)
+        fitness = [sum(euclid(points[t[i]], points[t[(i+1)%n]]) for i in range(n)) for t in population]
+        if gen % 40 == 0 or gen == generations - 1:
+            print(f"  Gen {gen:3d}: {min(fitness):,.1f}")
         
-        # Elites
-        elites = [x for _, x in sorted(zip(fitness, population))[:pop_size//5]]
-        
-        # Breed
+        elites = [x for _, x in sorted(zip(fitness, population))[:pop_size//4]]
         offspring = elites.copy()
+        
         while len(offspring) < pop_size:
             p1, p2 = random.sample(elites, 2)
             start, end = sorted(random.sample(range(n), 2))
-            child = p1[:]
             segment = p1[start:end]
             remaining = [x for x in p2 if x not in segment]
             child = remaining[:start] + segment + remaining[start:]
-            # Mutation
-            if random.random() < 0.1:
+            if random.random() < 0.15:
                 i, j = random.sample(range(n), 2)
                 child[i], child[j] = child[j], child[i]
             offspring.append(child)
-        
         population = offspring
-        
-        if gen % 40 == 0:
-            print(f"Gen {gen}: {min(fitness):,.0f}")
     
-    # Final best + 3-opt
     best_tour = min(population, key=lambda t: sum(euclid(points[t[i]], points[t[(i+1)%n]]) for i in range(n)))
     best_points = [points[i] for i in best_tour] + [points[best_tour[0]]]
     best_points = three_opt(best_points)
     final_len = sum(euclid(best_points[i], best_points[i+1]) for i in range(len(best_points)-1))
     return final_len
 
-# Load data
-print("Loading data...")
-points_100 = pd.read_csv("us_cities_100.csv")[['lat','lon']].values.tolist()
-points_1000 = pd.read_csv("us-cities-top-1k.csv")[['lat','lon']].values.tolist()
-points_clustered = pd.read_csv("US_Accidents_March23.csv", usecols=['Start_Lat','Start_Lng']).dropna().drop_duplicates().head(1000).values.tolist()
-
-datasets = [
-    (points_100, "100 US Cities"),
-    (points_1000, "1,000 Nationwide US Cities"),
-    (points_clustered, "1,000 Clustered (March 2023)")
-]
-
-for points, name in datasets:
-    print(f"\n=== {name} ===")
-    start = time.time()
-    length = ga_cooks_ruler(points)
-    print(f"Cook's Ruler + GA + 3-opt: {length:,.0f} miles")
-    print(f"Time: {time.time()-start:.1f}s")
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('file')
+    parser.add_argument('--name', default='Warehouse')
+    args = parser.parse_args()
+    
+    df = pd.read_csv(args.file)
+    points = [(row['x'], row['y']) for _, row in df.iterrows()]
+    n = len(points)
+    
+    print(f"\n=== {args.name} — {n} points ===\n")
+    
+    nn_len = sum(euclid(points[nearest_neighbor(points)[i]], 
+                       points[nearest_neighbor(points)[(i+1)%n]]) for i in range(n))
+    print(f"Nearest Neighbor: {nn_len:,.1f}")
+    
+    final_len = ga_cooks_ruler(points)
+    improvement = (nn_len - final_len) / nn_len * 100
+    
+    print(f"\nCooks Ruler ALL-IN: {final_len:,.1f}")
+    print(f"Improvement: {improvement:+.1f}% vs Nearest Neighbor")
