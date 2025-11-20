@@ -85,5 +85,24 @@ It doesn't beat LKH-3 on quality — **yet** — but it **crushes** everything e
 | **3D Printing Toolpath Optimization** | $5B      | 25%  | Slicers (Prusa, Cura)             | +5–10%                    | **+21.5%** on layer paths          |
 | **Defense Drone Swarms** (DoD, Anduril) | $12B     | 14%  | GA + Dubins paths                 | +10–15%                   | **+21.5%** in 3D airspace          |
 
-**Bottom line:**  
-The Euclidean Monster is the **fastest, simplest, most powerful flat-space TSP solver ever written in pure Python**.
+### How to test your own data
+
+Two versions included:
+
+| Use case                     | Script                     | Command |
+|------------------------------|----------------------------|------------------------------------------------------|
+| Real Earth (lat/lon)         | `cooks_ruler.py`           | `python3 cooks_ruler.py YourDataFile.csv --name "My Data`|
+| Flat space (warehouse, PCB, robotics, physics) | `cooks_ruler_euclidean.py` | `python3 cooks_ruler_euclidean.py YourDataFile.csv --name "My Data"`|
+
+Your CSV needs three columns: `id`, `x`, `y` (or `lat`, `lon` for Earth)
+
+Example warehouse file.csv <br/>
+id,x,y <br/>
+A01,12.5,88.2 <br/>
+A02,45.1,23.9 <br/>
+<br/>
+Example city file.csv <br/>
+id,lat,lon <br/>
+A01,38.8,42,4 <br/>
+A02,77.3,56.3 <br/>
+```
